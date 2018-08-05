@@ -25,15 +25,15 @@
                 <p style="display: none;text-align: center;padding-top: 0.5rem" id="more"><a>加载更多</a></p>
                 <p class="chat-time"><span class="time">2017-11-12</span></p>
 
-                <div class="chat-text section-left flex">
-                    <span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/123.jpg)"></span>
-                    <span class="text"><i class="icon icon-sanjiao4 t-32"></i>你好</span>
-                </div>
+                <!--<div class="chat-text section-left flex">-->
+                    <!--<span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/123.jpg)"></span>-->
+                    <!--<span class="text"><i class="icon icon-sanjiao4 t-32"></i>你好</span>-->
+                <!--</div>-->
 
-                <div class="chat-text section-right flex">
-                    <span class="text"><i class="icon icon-sanjiao3 t-32"></i>你好</span>
-                    <span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/132.jpg)"></span>
-                </div>
+                <!--<div class="chat-text section-right flex">-->
+                    <!--<span class="text"><i class="icon icon-sanjiao3 t-32"></i>你好</span>-->
+                    <!--<span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/132.jpg)"></span>-->
+                <!--</div>-->
 
             </div>
         </div>
@@ -50,14 +50,26 @@
     var wx = new WebSocket("ws://127.0.0.1:8282");
 
     wx.onmessage = function (ev) {
-        console.log(ev);
+
+
+        var message = eval("("+ev.data+")");
+        switch (message.type){
+            case "text":
+                $('.chat-content').append('<div class="chat-text section-left flex"><span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/123.jpg)"></span><span class="text"><i class="icon icon-sanjiao4 t-32"></i>'+message.data+'</span></div>');
+                return;
+        }
+        console.log(message);
     };
 
     $('.send-btn').click(function () {
         //获取输入框信息
         var mess = $('.send-input').val();
         //发送信息
-        wx.send(mess);
+        var message = '{"data" : "'+mess+'","type":"say"}';
+
+        $('.chat-content').append('<div class="chat-text section-right flex"><span class="text"><i class="icon icon-sanjiao3 t-32"></i>'+mess+'</span><span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/132.jpg)"></span></div>');
+
+        wx.send(message);
 
         //清空输入框信息
         $('.send-input').val("");

@@ -46,5 +46,23 @@
     </div>
 </div>
 
+<script>
+    var wx = new WebSocket("ws://127.0.0.1:8282");
+
+    wx.onmessage = function (ev) {
+        console.log(ev);
+    };
+
+    $('.send-btn').click(function () {
+        //获取输入框信息
+        var mess = $('.send-input').val();
+        //发送信息
+        wx.send(mess);
+
+        //清空输入框信息
+        $('.send-input').val("");
+    })
+
+</script>
 </body>
 </html>

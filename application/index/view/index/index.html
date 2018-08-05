@@ -47,13 +47,20 @@
 </div>
 
 <script>
+    var fromid = {$fromid};
+
+    var toid = {$toid};
+
     var wx = new WebSocket("ws://127.0.0.1:8282");
 
     wx.onmessage = function (ev) {
 
-
         var message = eval("("+ev.data+")");
         switch (message.type){
+            case "init":
+                var bild = '{"type":"bind","fromid":"'+fromid+'"}';
+                wx.send(bild);
+                return;
             case "text":
                 $('.chat-content').append('<div class="chat-text section-left flex"><span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/123.jpg)"></span><span class="text"><i class="icon icon-sanjiao4 t-32"></i>'+message.data+'</span></div>');
                 return;
@@ -65,7 +72,7 @@
         //获取输入框信息
         var mess = $('.send-input').val();
         //发送信息
-        var message = '{"data" : "'+mess+'","type":"say"}';
+        var message = '{"data" : "'+mess+'","type":"say","fromid":"'+fromid+'","toid":"'+toid+'"}';
 
         $('.chat-content').append('<div class="chat-text section-right flex"><span class="text"><i class="icon icon-sanjiao3 t-32"></i>'+mess+'</span><span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/132.jpg)"></span></div>');
 

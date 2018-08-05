@@ -51,6 +51,8 @@
 
     var toid = {$toid};
 
+    var API_URL = "http://chat.com/index.php/api/chat/";
+
     var wx = new WebSocket("ws://127.0.0.1:8282");
 
     wx.onmessage = function (ev) {
@@ -62,7 +64,14 @@
                 wx.send(bild);
                 return;
             case "text":
-                $('.chat-content').append('<div class="chat-text section-left flex"><span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/123.jpg)"></span><span class="text"><i class="icon icon-sanjiao4 t-32"></i>'+message.data+'</span></div>');
+
+                if(toid == message.fromid){
+                    $('.chat-content').append('<div class="chat-text section-left flex"><span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/123.jpg)"></span><span class="text"><i class="icon icon-sanjiao4 t-32"></i>'+message.data+'</span></div>');
+                }
+
+                return;
+            case "save":
+                save_message(message);
                 return;
         }
         console.log(message);
@@ -80,7 +89,18 @@
 
         //清空输入框信息
         $('.send-input').val("");
-    })
+    });
+
+
+    function save_message(message) {
+        $.post(
+            API_URL + "save_message",
+            message,
+            function () {
+
+            },'json'
+        )
+    }
 
 </script>
 </body>

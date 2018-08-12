@@ -51,6 +51,12 @@
 
     var toid = {$toid};
 
+    var from_head = '';
+
+    var to_head = '';
+
+    var to_name = '';
+
     var API_URL = "http://chat.com/index.php/api/chat/";
 
     var wx = new WebSocket("ws://127.0.0.1:8282");
@@ -62,11 +68,13 @@
             case "init":
                 var bild = '{"type":"bind","fromid":"'+fromid+'"}';
                 wx.send(bild);
+                get_head(fromid,toid);
+                get_name(toid);
                 return;
             case "text":
 
                 if(toid == message.fromid){
-                    $('.chat-content').append('<div class="chat-text section-left flex"><span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/123.jpg)"></span><span class="text"><i class="icon icon-sanjiao4 t-32"></i>'+message.data+'</span></div>');
+                    $('.chat-content').append('<div class="chat-text section-left flex"><span class="char-img" style="background-image: url('+to_head+')"></span><span class="text"><i class="icon icon-sanjiao4 t-32"></i>'+message.data+'</span></div>');
                 }
 
                 return;
@@ -83,7 +91,7 @@
         //发送信息
         var message = '{"data" : "'+mess+'","type":"say","fromid":"'+fromid+'","toid":"'+toid+'"}';
 
-        $('.chat-content').append('<div class="chat-text section-right flex"><span class="text"><i class="icon icon-sanjiao3 t-32"></i>'+mess+'</span><span class="char-img" style="background-image: url(http://chat.com/static/newcj/img/132.jpg)"></span></div>');
+        $('.chat-content').append('<div class="chat-text section-right flex"><span class="text"><i class="icon icon-sanjiao3 t-32"></i>'+mess+'</span><span class="char-img" style="background-image: url('+from_head+')"></span></div>');
 
         wx.send(message);
 
@@ -98,6 +106,28 @@
             message,
             function () {
 
+            },'json'
+        )
+    }
+
+    function get_head (fromid , toid) {
+        $.post(
+            API_URL + "get_head",
+            {"fromid":fromid,"toid":toid},
+            function (e) {
+                from_head = e.from_head;
+                to_head = e.to_head;
+            },'json'
+        )
+    }
+
+    function get_name(toid) {
+        $.post(
+            API_URL + "get_name",
+            {"uid":toid},
+            function (e) {
+                to_name = e.toname;
+                $(".shop-titlte").text("与"+to_name+"聊天中...");
             },'json'
         )
     }

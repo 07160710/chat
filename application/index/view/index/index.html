@@ -70,6 +70,7 @@
                 wx.send(bild);
                 get_head(fromid,toid);
                 get_name(toid);
+                message_load();
                 return;
             case "text":
 
@@ -128,6 +129,16 @@
             function (e) {
                 to_name = e.toname;
                 $(".shop-titlte").text("与"+to_name+"聊天中...");
+            },'json'
+        )
+    }
+    
+    function message_load() {
+        $.post(
+            API_URL + 'load',
+            {"fromid":fromid,"toid":toid},
+            function (e) {
+                console.log(e);
             },'json'
         )
     }

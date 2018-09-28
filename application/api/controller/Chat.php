@@ -70,4 +70,27 @@ class Chat extends Controller
             return ["toname" => $toinfo['nickname']];
         }
     }
+
+    /**
+     * 页面加载返回聊天记录
+     */
+    public function load()
+    {
+        if(Request::instance()->isAjax()){
+            $fromid = input('fromid');
+            $toid = input('toid');
+
+            $count = Db::name('communication')->where('(fromid=:fromid and toid=:toid) || (fromid=:toid1 and toid=:fromid1)',['fromid'=>$fromid,'toid'=>$toid,'toid1'=>$toid,'fromid1'=>$fromid])->count();
+
+            if($count >= 10){
+                $message = Db::name('communication')->where('(fromid=:fromid and toid=:toid) || (fromid=:toid1 and toid=:fromid1)',['fromid'=>$fromid,'toid'=>$toid,'toid1'=>$toid,'fromid1'=>$fromid])->limit($count-10,10)->order('id')->select();
+            }else {
+                $message = Db::name('communication')->where('(fromid=:fromid and toid=:toid) || (fromid=:toid1 and toid=:fromid1)', ['fromid' => $fromid, 'toid' => $toid, 'toid1' => $toid, 'fromid1' => $fromid])->select();
+            }
+
+            return $message;
+            //Db::name('communication')->where('(fromid=:fromid and toid=:toid) || (fromid=:toid1 and toid=:fromid1)',['fromid'=>$fromid,'toid'=>$toid,'toid1'=>$toid,'fromid1'=>$fromid])->select();
+
+        }
+    }
 }

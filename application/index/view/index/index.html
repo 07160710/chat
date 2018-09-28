@@ -71,17 +71,31 @@
                 get_head(fromid,toid);
                 get_name(toid);
                 message_load();
+                var online = '{"type":"online","toid":"'+toid+'","fromid":"'+fromid+'"}';
+                wx.send(online);
                 return;
             case "text":
 
                 if(toid == message.fromid){
                     $('.chat-content').append('<div class="chat-text section-left flex"><span class="char-img" style="background-image: url('+to_head+')"></span><span class="text"><i class="icon icon-sanjiao4 t-32"></i>'+message.data+'</span></div>');
+                    $('.chat-content').scrollTop(3000);
                 }
 
                 return;
             case "save":
                 save_message(message);
+                if(message.isread == 1){
+                    $(".shop-online").text("在线");
+                }else{
+                    $(".shop-online").text("不在线");
+                }
                 return;
+            case "online":
+                if(message.status == 1){
+                    $(".shop-online").text("在线");
+                }else{
+                    $(".shop-online").text("不在线");
+                }
         }
         console.log(message);
     };
@@ -94,6 +108,7 @@
 
         $('.chat-content').append('<div class="chat-text section-right flex"><span class="text"><i class="icon icon-sanjiao3 t-32"></i>'+mess+'</span><span class="char-img" style="background-image: url('+from_head+')"></span></div>');
 
+        $('.chat-content').scrollTop(3000);
         wx.send(message);
 
         //清空输入框信息
@@ -138,7 +153,16 @@
             API_URL + 'load',
             {"fromid":fromid,"toid":toid},
             function (e) {
-                console.log(e);
+                $.each(e,function (index,content) {
+                    if(fromid == content.fromid){
+                        $('.chat-content').append('<div class="chat-text section-right flex"><span class="text"><i class="icon icon-sanjiao3 t-32"></i>'+content.content+'</span><span class="char-img" style="background-image: url('+from_head+')"></span></div>');
+                    }else{
+                        $('.chat-content').append('<div class="chat-text section-left flex"><span class="char-img" style="background-image: url('+to_head+')"></span><span class="text"><i class="icon icon-sanjiao4 t-32"></i>'+content.content+'</span></div>');
+                    }
+                })
+                $('.chat-content').scrollTop(3000);
+
+                //console.log(e);
             },'json'
         )
     }
